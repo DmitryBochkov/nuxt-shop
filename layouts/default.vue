@@ -12,13 +12,13 @@
             <span></span>
             <span></span>
           </div>
-        </div>  
+        </div>
 
         <div id="top-menu" class="navbar-menu">
           <div class="navbar-start">
             <nuxt-link class="navbar-item" to="/">
                 Home
-            </nuxt-link>        
+            </nuxt-link>
             <div class="navbar-item has-dropdown is-hoverable">
               <a class="navbar-link is-active" href="#">
                 Admin
@@ -29,7 +29,7 @@
                 </nuxt-link>
                 <nuxt-link class="navbar-item" to="/admin/product-categories">
                   Product Categories
-                </nuxt-link>  
+                </nuxt-link>
                 <a class="navbar-item " href="#">
                   Orders
                 </a>
@@ -38,7 +38,7 @@
                 </a>
                 <nuxt-link class="navbar-item" to="/admin/administrators">
                   Administrators
-                </nuxt-link>                      
+                </nuxt-link>
                 <nuxt-link class="navbar-item" to="/admin/user-groups">
                   User Groups
                 </nuxt-link>
@@ -46,14 +46,14 @@
             </div>
           </div>
 
-          <div class="navbar-end">   
+          <div class="navbar-end">
             <div class="navbar-item">
               Hi, Guest
-            </div>       
+            </div>
             <div class="navbar-item">
               <div class="field is-grouped is-grouped-multiline">
                 <p class="control">
-                  <nuxt-link class="button" to="/cart">  
+                  <nuxt-link class="button" to="/cart">
                     <span class="icon is-small">
                       <i class="fa fa-shopping-cart"></i>
                     </span>
@@ -62,7 +62,7 @@
                 </p>
 
                 <p class="control">
-                  <nuxt-link class="button is-primary" to="/login">  
+                  <nuxt-link class="button is-primary" to="/login">
                       <span class="icon is-small">
                           <i class="fa fa-unlock-alt"></i>
                       </span>
@@ -73,7 +73,7 @@
                 </p>
 
                 <p class="control">
-                  <nuxt-link class="button is-info" to="/signup">  
+                  <nuxt-link class="button is-info" to="/signup">
                     <span class="icon is-small">
                       <i class="fa fa-user-o"></i>
                     </span>
@@ -100,6 +100,6 @@
           </p>
         </div>
       </div>
-    </footer>    
+    </footer>
   </div>
 </template>

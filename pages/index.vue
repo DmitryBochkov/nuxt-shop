@@ -1,6 +1,6 @@
 <template>
   <div>
-    <section class="section left-right-pad is-fluid">
+    <!-- <section class="section left-right-pad is-fluid">
       <div class="hero is-medium is-primary is-bold has-text-centered">
         <div class="hero-body">
           <h1 class="title">
@@ -11,7 +11,7 @@
           </h2>
         </div>
       </div>
-    </section>
+    </section> -->
 
     <section class="section">
       <div class="box">
@@ -152,5 +152,7 @@
 </template>
 
 <script>
-export default {}
+export default {
+
+}
 </script>
