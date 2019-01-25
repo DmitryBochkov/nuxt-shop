@@ -1,3 +1,5 @@
+// import fireApp from '@/plugins/firebase'
+
 export const state = () => ({
 })
 
