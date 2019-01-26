@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "firebase": "^5.8.1",
-    "nuxt": "^1.0.0"
+    "nuxt": "^1.0.0",
+    "vee-validate": "^2.1.6"
   },
   "devDependencies": {
     "cross-env": "^5.0.1",
