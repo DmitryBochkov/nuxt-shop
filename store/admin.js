@@ -12,15 +12,11 @@ export const mutations = {
     state.groups.push(payload)
   },
   updateGroup(state, payload) {
-    const groupIndex = state.groups.findIndex(group => {
-      return group.key === payload.group.key
-    })
+    const groupIndex = state.groups.findIndex(group => group.key === payload.group.key)
     state.groups[groupIndex].name = payload.name
   },
   removeGroup(state, payload) {
-    const groupIndex = state.groups.findIndex(group => {
-      return group.key === payload.group.key
-    })
+    const groupIndex = state.groups.findIndex(group => group.key === payload.group.key)
     state.groups.splice(groupIndex, 1)
   }
 }
@@ -34,7 +30,7 @@ export const actions = {
       .then(() => {
         commit('setBusy', false, {root: true})
         commit('setJobDone', true, {root: true})
-        commit('addGroup', payload )
+        // commit('addGroup', payload )
       })
       .catch(err => {
         commit('setBusy', false, {root: true})

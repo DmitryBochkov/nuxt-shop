@@ -97,7 +97,17 @@
         this.name = group.name
       },
       removeGroup(group) {
-        this.$store.dispatch('admin/removeGroup', { group: group })
+        this.$swal({
+          title: 'Delete the group?',
+          icon: 'warning',
+          buttons: true,
+          dangerMode: true
+        })
+        .then(ok => {
+          if (ok) {
+            this.$store.dispatch('admin/removeGroup', { group: group })            
+          }
+        })
       },
       cancelUpdate() {
         this.group = null

@@ -39,7 +39,8 @@ module.exports = {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    '~/plugins/vee-validate'
+    '~/plugins/vee-validate',
+    '~/plugins/vue-swal'
   ],
 
   /*
