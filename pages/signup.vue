@@ -74,9 +74,8 @@
         })
       },
       jobsDone() {
-        this.$nextTick(() => {
-          this.removeErrors()
-        })
+        this.removeErrors()
+        this.$router.replace('/')
       },
       removeErrors() {
         this.$validator.reset()
