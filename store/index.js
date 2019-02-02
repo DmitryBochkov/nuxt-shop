@@ -74,12 +74,55 @@ export const actions = {
         commit('setBusy', false)
         commit('setError', err)
       })
+  },
+  loginUser({commit}, {email, password}) {
+    commit('setBusy', true)
+    commit('clearError')
+    // 1. Login user
+    // 2. Find the group user belongs to
+    // 3. Set logged in user
+    fireApp.auth().signInWithEmailAndPassword(email, password)
+      .then(cred => {
+        const user = cred.user
+        const authUser = {
+          email: user.email,
+          name: user.displayName,
+          id: user.uid,
+        }
+
+        return fireApp.database().ref('groups').orderByChild('name').equalTo('Administrator').once('value')
+          .then(snapShot => {
+            const groupKey = Object.keys(snapShot.val())[0]
+            return fireApp.database().ref(`userGroups/${groupKey}`).child(`${authUser.id}`).once('value')
+              .then(ugroupSnap => {
+                if (ugroupSnap.exists()) {
+                  authUser.role = 'admin'
+                } else {
+                  authUser.role = 'customer'
+                }
+                commit('setUser', authUser)
+                commit('setBusy', false)
+                commit('setJobDone', true)
+              })
+              .catch(err => {
+                commit('setBusy', false)
+                commit('setError', err)
+              })
+          })
+      })
+      .catch(err => {
+        commit('setBusy', false)
+        commit('setError', err)
+      })
   }
 }
 
 export const getters = {
   user(state) {
     return state.user
+  },
+  loginStatus(state) {
+    return state.user !== null && state.user !== undefined
   },
   error(state) {
     return state.error
