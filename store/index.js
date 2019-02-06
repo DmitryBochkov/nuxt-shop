@@ -127,7 +127,7 @@ export const actions = {
           name: user.displayName,
           id: user.uid,
         }
-        
+
         fireApp.database().ref('groups').orderByChild('name').equalTo('Administrator').once('value')
         .then(snapShot => {
           const groupKey = Object.keys(snapShot.val())[0]
@@ -143,6 +143,53 @@ export const actions = {
         })
       }
     })
+  },
+  updateProfile({commit, getters}, {fullname, email}) {
+    // 1. Update user name with updteProfile
+    // 2. Update user email with updteEmail
+    // 3. Update the datasbase
+    // 4. Will divide the code into chunks
+    // -LXJJ7C0wHZXtHJlbK6i -LXJJ9COPQKl_RDctFPu
+    commit('setBusy', true)
+    commit('clearError')
+    const userData = getters.user
+    const user = fireApp.auth().currentUser
+
+    const updateEmail = () => {
+      return user.updateEmail(email)
+    }
+    const updateDb = () => {
+      const updateObj = {}
+      if (userData.role == 'admin') {
+        updateObj[`userGroups/-LXJJ7C0wHZXtHJlbK6i/${user.uid}`] = fullname        
+      }
+      updateObj[`userGroups/-LXJJ9COPQKl_RDctFPu/${user.uid}`] = fullname
+      updateObj[`users/${user.uid}/name`] = fullname
+      updateObj[`users/${user.uid}/email`] = email
+
+      return fireApp.database().ref().update(updateObj)
+    }
+    user.updateProfile({
+      displayName: fullname
+    })
+      .then(updateEmail)
+      .then(updateDb)
+      .then(() => {
+        const userObj = {
+          id: userData.id,
+          email: email,
+          name: fullname,
+          role: userData.role
+        }
+        commit('setUser', userObj)
+        commit('setJobDone', true)
+        commit('setBusy', false)
+      })
+      .catch(err => {
+        commit('setError', err)
+        commit('setBusy', false)
+      })
+
   }
 }
 
