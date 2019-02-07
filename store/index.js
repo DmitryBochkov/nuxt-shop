@@ -1,4 +1,4 @@
-import fireApp from '@/plugins/firebase'
+import {fireApp} from '@/plugins/firebase'
 
 export const state = () => ({
   user: null,
@@ -33,7 +33,7 @@ export const actions = {
     // 2. Updte firebase user data and set local user data
     // 3. Add usr data into database
     // 4. Attach user to consumer group
-    let newUser = null;
+    let newUser = null
     fireApp.auth().createUserWithEmailAndPassword(email, password)
       .then(cred => {
         newUser = cred.user
@@ -45,7 +45,6 @@ export const actions = {
             name: fullname,
             role: 'consumer'
           }
-          console.log(currentUser);
           commit('setUser', currentUser)
         })
       })
@@ -161,7 +160,7 @@ export const actions = {
     const updateDb = () => {
       const updateObj = {}
       if (userData.role == 'admin') {
-        updateObj[`userGroups/-LXJJ7C0wHZXtHJlbK6i/${user.uid}`] = fullname        
+        updateObj[`userGroups/-LXJJ7C0wHZXtHJlbK6i/${user.uid}`] = fullname
       }
       updateObj[`userGroups/-LXJJ9COPQKl_RDctFPu/${user.uid}`] = fullname
       updateObj[`users/${user.uid}/name`] = fullname
@@ -190,6 +189,20 @@ export const actions = {
         commit('setBusy', false)
       })
 
+  },
+  changePwd ({commit}, payload) {
+    commit('setBusy', true)
+    commit('clearError')
+    const user = fireApp.auth().currentUser
+    user.updatePassword(payload.password)
+      .then(() => {
+        commit('setBusy', false)
+        commit('setJobDone', true)
+      })
+      .catch(error => {
+        commit('setBusy', false)
+        commit('setError', error)
+      })
   }
 }
 
