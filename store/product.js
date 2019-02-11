@@ -71,21 +71,39 @@ export const actions = {
   addProduct({commit}, payload) {
     const productData = payload
     const categories = payload.belongs
+    const image = payload.image
+    let productKey = ''
+    let imageUrl = ''
     delete productData.belongs
+    delete productData.image
 
     commit('setBusy', true, { root: true })
     commit('clearError', null, { root: true })
 
     fireApp.database().ref('products').push(payload)
       .then(result => {
+        productKey = result.key
+        return fireApp.storage().ref(`products/${image.name}`).put(image)
+      })
+      .then(fileData => {
+        console.log(fileData);
+        const fullPath = fileData.metadata.fullPath
+        return fireApp.storage().ref(fullPath).getDownloadURL()
+      })
+      .then(imageUrl => {
+        console.log(imageUrl);
+        return fireApp.database().ref('products').child(productKey).update({imageUrl: imageUrl})
+      })
+      .then(() => {
         const productSnippet =  {
           name: productData.name,
           price: productData.price,
-          status: productData.status
+          status: productData.status,
+          imageUrl: imageUrl
         }
         let catUpdates = {}
         categories.forEach(catKey => {
-          catUpdates[`productCategories/${catKey}/${result.key}`] = productSnippet
+          catUpdates[`productCategories/${catKey}/${productKey}`] = productSnippet
         })
 
         return fireApp.database().ref().update(catUpdates)

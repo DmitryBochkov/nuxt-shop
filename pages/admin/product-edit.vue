@@ -20,7 +20,7 @@
             <label class="label">Product image</label>
             <div class="file has-name is-fullwidth">
               <label class="file-label">
-                <input class="file-input" type="file" name="resume">
+                <input class="file-input" type="file" name="resume" @change="onImageSelect">
                 <span class="file-cta">
                   <span class="file-icon">
                     <i class="fa fa-upload"></i>
@@ -30,13 +30,13 @@
                   </span>
                 </span>
                 <span class="file-name">
-                  product.jpg
+                  {{ imageName }}
                 </span>
               </label>
             </div>
             <br>
             <p class="image is-4by3">
-              <img src="https://placehold.it/800x600">
+              <img :src="imageUrl">
             </p>
           </div>
           <div class="column">
@@ -133,7 +133,10 @@
         stock: '',
         belongs: [],
         status: 1,
-        description: ''
+        description: '',
+        image: null,
+        imageName: '',
+        imageUrl: 'https://placehold.it/800x600'
       }
     },
     middleware: 'verify-admin',
@@ -160,11 +163,22 @@
                 stock: this.stock,
                 belongs: this.belongs,
                 status: this.status,
-                description: this.description
+                description: this.description,
+                image: this.image
               }
               this.$store.dispatch('product/addProduct', productData)
             }
           })
+      },
+      onImageSelect(event) {
+        const files = event.target.files
+        this.imageName = files[0].name
+        this.image = files[0]
+        const reader = new FileReader()
+        reader.onload = () => {
+          this.imageUrl = reader.result
+        }
+        reader.readAsDataURL(files[0])
       }
     },
     mounted() {
