@@ -1,6 +1,6 @@
 <template>
   <div>
-    <section class="section no-top-pad">  
+    <section class="section no-top-pad">
       <nav class="level">
         <div class="level-left">
           <div class="level-item">
@@ -9,7 +9,7 @@
         </div>
         <div class="level-right">
           <div class="level-item">
-            <nuxt-link class="button is-primary" to="/admin/product-edit">Add</nuxt-link> 
+            <nuxt-link class="button is-primary" to="/admin/product-edit">Add</nuxt-link>
           </div>
         </div>
       </nav>
@@ -20,40 +20,43 @@
             <th>#</th>
             <th>Image</th>
             <th>Product</th>
-            <th>Code</th>                      
+            <th>Code</th>
             <th>Brand</th>
             <th class="has-text-centered">Stock</th>
             <th class="has-text-centered">Status</th>
             <th>&nbsp;</th>
           </tr>
-        </thead>  
+        </thead>
         <tbody>
-          <tr>
-            <th>1</th>
-            <td></td>
-            <td><a href="#">Product 1</a></td>
-            <td></td>                                                                        
-            <td></td>
-            <td></td>
-            <td></td>
+          <tr v-for="(product, index) in products" :key="product.key">
+            <th>{{ index+1 }}</th>
+            <td><img :src="product.imageUrl" :alt="product.name" class="image is-48x48"></td>
+            <td><a href="#">{{ product.name }}</a></td>
+            <td>{{ product.code }}</td>
+            <td>{{ product.brand }}</td>
+            <td class="has-text-centered">{{ product.stock }}</td>
+            <td class="has-text-centered">{{ product.status === 1 ? 'Available' : 'Not Available' }}</td>
             <td><a href="#"><span class="icon has-text-danger"><i class="fa fa-lg fa-times-circle"></i></span></a></td>
-          </tr> 
-          <tr>
-            <th>2</th>
-            <td></td>
-            <td><a href="#">Product 2</a></td>
-            <td></td>                                                                        
-            <td></td>
-            <td></td>
-            <td></td>
-            <td><a href="#"><span class="icon has-text-danger"><i class="fa fa-lg fa-times-circle"></i></span></a></td>
-          </tr>               
+          </tr>
+
         </tbody>
-      </table>                        
+      </table>
     </section>
   </div>
 </template>
 
 <script>
-  export default {}
+  export default {
+    created() {
+      const loadedProducts = this.$store.getters['product/products']
+      if (loadedProducts.length === 0) {
+        this.$store.dispatch('product/getPoducts')
+      }
+    },
+    computed: {
+      products() {
+        return this.$store.getters['product/products']
+      }
+    }
+  }
 </script>

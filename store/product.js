@@ -1,7 +1,8 @@
 import { fireApp } from '@/plugins/firebase'
 
 export const state = () => ({
-  categories: []
+  categories: [],
+  products: []
 })
 
 export const mutations = {
@@ -15,6 +16,9 @@ export const mutations = {
   removeCategory (state, payload) {
     const i = state.categories.indexOf(payload.category)
     state.categories.splice(i, 1)
+  },
+  loadProducts (state, payload) {
+    state.products = payload
   }
 }
 
@@ -116,11 +120,28 @@ export const actions = {
         commit('setBusy', false, { root: true })
         commit('setError', err, { root: true })
       })
+  },
+  getPoducts({commit}) {
+    fireApp.database().ref('products').once('value')
+      .then(snapShot => {
+        console.log(snapShot);
+        const products = []
+        let item = {}
+        snapShot.forEach(child => {
+          item = child.val()
+          item.key = child.key
+          products.push(item)
+        })
+        commit('loadProducts', products.reverse())
+      })
   }
 }
 
 export const getters = {
-  categories (state) {
+  categories(state) {
     return state.categories
+  },
+  products(state) {
+    return state.products
   }
 }
