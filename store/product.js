@@ -6,19 +6,23 @@ export const state = () => ({
 })
 
 export const mutations = {
-  loadCategories (state, payload) {
+  loadCategories(state, payload) {
     state.categories.push(payload)
   },
-  updateCategory (state, payload) {
+  updateCategory(state, payload) {
     const i = state.categories.indexOf(payload.category)
     state.categories[i].name = payload.name
   },
-  removeCategory (state, payload) {
+  removeCategory(state, payload) {
     const i = state.categories.indexOf(payload.category)
     state.categories.splice(i, 1)
   },
-  loadProducts (state, payload) {
+  loadProducts(state, payload) {
     state.products = payload
+  },
+  removeProduct(state, payload) {
+    const i = state.products.indexOf(payload)
+    state.products.splice(i, 1)
   }
 }
 
@@ -26,7 +30,6 @@ export const actions = {
   createCategory ({commit}, payload) {
     commit('setBusy', true, { root: true })
     commit('clearError', null, { root: true })
-    console.log(payload);
     fireApp.database().ref('categories').push(payload)
       .then(() => {
         commit('setBusy', false, { root: true })
@@ -72,7 +75,7 @@ export const actions = {
         console.log(error)
       })
   },
-  addProduct({commit}, payload) {
+  addProduct({dispatch, commit}, payload) {
     const productData = payload
     const categories = payload.belongs
     const image = payload.image
@@ -90,12 +93,10 @@ export const actions = {
         return fireApp.storage().ref(`products/${image.name}`).put(image)
       })
       .then(fileData => {
-        console.log(fileData);
         const fullPath = fileData.metadata.fullPath
         return fireApp.storage().ref(fullPath).getDownloadURL()
       })
       .then(imageUrl => {
-        console.log(imageUrl);
         return fireApp.database().ref('products').child(productKey).update({imageUrl: imageUrl})
       })
       .then(() => {
@@ -113,6 +114,7 @@ export const actions = {
         return fireApp.database().ref().update(catUpdates)
       })
       .then(result => {
+        dispatch('getPoducts')
         commit('setBusy', false, { root: true })
         commit('setJobDone', true, { root: true })
       })
@@ -124,7 +126,6 @@ export const actions = {
   getPoducts({commit}) {
     fireApp.database().ref('products').once('value')
       .then(snapShot => {
-        console.log(snapShot);
         const products = []
         let item = {}
         snapShot.forEach(child => {
@@ -133,6 +134,35 @@ export const actions = {
           products.push(item)
         })
         commit('loadProducts', products.reverse())
+      })
+  },
+  removeProduct({commit}, payload) {
+    // 1. Remove the product image from the storage
+    // 2. Remove the product from products
+    // 3. Remove the product from categories
+    const imageUrl = payload.imageUrl
+    const refUrl = imageUrl.split('?')[0]
+    const httpsRef = fireApp.storage().refFromURL(refUrl)
+    httpsRef.delete()
+      .then(() => {
+        return fireApp.database().ref(`products/${payload.key}`).remove()
+          .then(() => {
+            return fireApp.database().ref('categories').once('value')
+              .then(snapShot => {
+                const catKeys = Object.keys(snapShot.val())
+                let updates = {}
+                catKeys.forEach(key => {
+                  updates[`productCategories/${key}/${payload.key}`] = null
+                })
+                return fireApp.database().ref().update(updates)
+              })
+          })
+      })
+      .then(() => {
+        commit('removeProduct', payload)
+      })
+      .catch(err => {
+        console.log(err)
       })
   }
 }

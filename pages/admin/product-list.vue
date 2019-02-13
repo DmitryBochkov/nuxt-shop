@@ -36,7 +36,7 @@
             <td>{{ product.brand }}</td>
             <td class="has-text-centered">{{ product.stock }}</td>
             <td class="has-text-centered">{{ product.status === 1 ? 'Available' : 'Not Available' }}</td>
-            <td><a href="#"><span class="icon has-text-danger"><i class="fa fa-lg fa-times-circle"></i></span></a></td>
+            <td><a href="#" @click.prevent="removeProduct(product)"><span class="icon has-text-danger"><i class="fa fa-lg fa-times-circle"></i></span></a></td>
           </tr>
 
         </tbody>
@@ -47,6 +47,21 @@
 
 <script>
   export default {
+    methods: {
+      removeProduct(product) {
+        this.$swal({
+          title: 'Delete the ' + product.name + '?',
+          icon: 'warning',
+          buttons: true,
+          dangerMode: true,
+        })
+        .then(ok => {
+          if (ok) {
+            this.$store.dispatch('product/removeProduct', product)
+          }
+        })
+      }
+    },
     created() {
       const loadedProducts = this.$store.getters['product/products']
       if (loadedProducts.length === 0) {

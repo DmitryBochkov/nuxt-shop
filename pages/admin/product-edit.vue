@@ -146,7 +146,7 @@
     },
     methods: {
       jobsDone () {
-        console.log('DONE')
+        this.$router.push('product-list')
       },
       goBack () {
         window.history.go(-1)
