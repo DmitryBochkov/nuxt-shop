@@ -2,7 +2,9 @@ import { fireApp } from '@/plugins/firebase'
 
 export const state = () => ({
   categories: [],
-  products: []
+  products: [],
+  product: null,
+  productCategories: []
 })
 
 export const mutations = {
@@ -20,9 +22,18 @@ export const mutations = {
   loadProducts(state, payload) {
     state.products = payload
   },
+  loadProduct(state, payload) {
+    state.product = payload
+  },
   removeProduct(state, payload) {
     const i = state.products.indexOf(payload)
     state.products.splice(i, 1)
+  },
+  loadProductCategories(state, payload) {
+    state.productCategories.push(payload)
+  },
+  clearProductCategories(state) {
+    state.productCategories = []
   }
 }
 
@@ -164,7 +175,96 @@ export const actions = {
       .catch(err => {
         console.log(err)
       })
+  },
+  updateProduct({dispatch, commit}, payload) {
+    const productData = payload
+    const categories = payload.belongs
+    const image = payload.image
+    const productKey = payload.key
+    let oldImageURL = null
+    let oldCatsRemoval = {}
+    delete productData.belongs // goes to productCategories
+    delete productData.image // goes to storage
+
+    commit('setBusy', true, { root: true })
+    commit('clearError', null, { root: true })
+
+    fireApp.database().ref(`products/${productKey}`).update(productData) // updated products data
+      .then(() => { // upload image if new image provided
+        if (image) {
+          return fireApp.storage().ref(`products/${image.name}`).put(image)
+        } else {
+          return false
+        }
+      })
+      .then(fileData => { // update prodact data with new image url
+        if (fileData) {
+          oldImageURL = productData.oldImageURL
+          const fullPath = fileData.metadata.fullPath
+          return fireApp.storage().ref(fullPath).getDownloadURL()
+        }
+      })
+      .then(imageUrl => {
+        if (imageUrl) {
+          productData.imageUrl = imageUrl
+          return fireApp.database().ref('products').child(productKey).update({imageUrl: imageUrl})
+        }
+      })
+      .then(() => { // remove old image if new img uploaded and old img exists
+        if (oldImageURL) {
+          const refUrl = oldImageURL.split('?')[0]
+          const httpsRef = fireApp.storage().refFromURL(refUrl)
+          return httpsRef.delete()
+        }
+      })
+      .then(() => { // prepare batch removal of product categories attachments
+        return fireApp.database().ref('productCategories').on('child_added',
+          snapShot => {
+            oldCatsRemoval[`productCategories/${snapShot.key}/${productKey}`] = null
+          }
+        )
+      })
+      .then(() => { // execute removal of product categories attachments
+        return fireApp.database().ref().update(oldCatsRemoval)
+      })
+      .then(() => { // add new product categories attachments
+        const productSnippet =  {
+          name: productData.name,
+          price: productData.price,
+          status: productData.status,
+          imageUrl: productData.imageUrl
+        }
+        let catUpdates = {}
+        categories.forEach(catKey => {
+          catUpdates[`productCategories/${catKey}/${productKey}`] = productSnippet
+        })
+
+        return fireApp.database().ref().update(catUpdates)
+      })
+      .then(() => {
+        dispatch('getPoducts') // dispatch getPoducts to refresh the products list
+        commit('setBusy', false, { root: true })
+        commit('setJobDone', true, { root: true })
+      })
+      .catch(err => {
+        commit('setBusy', false, { root: true })
+        commit('setError', err, { root: true })
+      })
+  },
+  productCategories({commit}, payload) {
+    commit('clearProductCategories')
+
+    fireApp.database().ref('productCategories').on('child_added',
+      snapShot => {
+        let item = snapShot.val()
+        item.key = snapShot.key
+        if (item[payload] != undefined) {
+          commit('loadProductCategories', item.key)
+        }
+      }
+    )
   }
+
 }
 
 export const getters = {
@@ -173,5 +273,11 @@ export const getters = {
   },
   products(state) {
     return state.products
+  },
+  product(state) {
+    return state.product
+  },
+  productCategories(state) {
+    return state.productCategories
   }
 }

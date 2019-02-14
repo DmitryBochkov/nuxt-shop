@@ -136,7 +136,8 @@
         description: '',
         image: null,
         imageName: '',
-        imageUrl: 'https://placehold.it/800x600'
+        imageUrl: 'https://placehold.it/800x600',
+        oldImageUrl: ''
       }
     },
     middleware: 'verify-admin',
@@ -166,7 +167,14 @@
                 description: this.description,
                 image: this.image
               }
-              this.$store.dispatch('product/addProduct', productData)
+              if (!this.key) {
+                this.$store.dispatch('product/addProduct', productData)
+              } else {
+                productData.key = this.key
+                productData.imageUrl = this.imageUrl
+                productData.oldImageUrl = this.oldImageUrl
+                this.$store.dispatch('product/updateProduct', productData)
+              }
             }
           })
       },
@@ -179,6 +187,18 @@
           this.imageUrl = reader.result
         }
         reader.readAsDataURL(files[0])
+      },
+      populateForm(product) {
+        this.key = product.key
+        this.name = product.name
+        this.code = product.code
+        this.brand = product.brand
+        this.price = product.price
+        this.stock = product.stock
+        this.status = product.status
+        this.description = product.description
+        this.imageUrl = product.imageUrl
+        this.oldImageUrl = product.imageUrl
       }
     },
     mounted() {
@@ -186,10 +206,26 @@
       if (loadedCats.length === 0) {
         this.$store.dispatch('product/getCategories')
       }
+
+      const product = this.$store.getters['product/product']
+      if (product != null) {
+        this.populateForm(product)
+        this.$store.dispatch('product/productCategories', product.key)
+      }
     },
     computed: {
       categories() {
         return this.$store.getters['product/categories']
+      },
+      productCategories() {
+        return this.$store.getters['product/productCategories']
+      }
+    },
+    watch: {
+      productCategories(val) {
+        if (val) {
+          this.belongs = val
+        }
       }
     }
   }

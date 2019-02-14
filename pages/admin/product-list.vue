@@ -31,7 +31,7 @@
           <tr v-for="(product, index) in products" :key="product.key">
             <th>{{ index+1 }}</th>
             <td><img :src="product.imageUrl" :alt="product.name" class="image is-48x48"></td>
-            <td><a href="#">{{ product.name }}</a></td>
+            <td><a href="#" @click.prevent="editProduct(product)">{{ product.name }}</a></td>
             <td>{{ product.code }}</td>
             <td>{{ product.brand }}</td>
             <td class="has-text-centered">{{ product.stock }}</td>
@@ -60,6 +60,10 @@
             this.$store.dispatch('product/removeProduct', product)
           }
         })
+      },
+      editProduct(product) {
+        this.$store.commit('product/loadProduct', product)
+        this.$router.push('product-edit')
       }
     },
     created() {
@@ -67,6 +71,8 @@
       if (loadedProducts.length === 0) {
         this.$store.dispatch('product/getPoducts')
       }
+      this.$store.commit('product/loadProduct', null)
+      this.$store.commit('product/clearProductCategories')
     },
     computed: {
       products() {
