@@ -55,103 +55,34 @@
       </div>
 
       <div class="columns is-mobile is-multiline">
-        <div class="column is-full-mobile is-half-tablet is-half-desktop is-one-third-widescreen is-one-quarter-fullhd">
-          <div class="card">
-            <div class="card-image">
-              <figure class="image is-4by3">
-                <nuxt-link to="/product"><img src="http://placehold.it/800x600" alt="Image"></nuxt-link>
-              </figure>
-            </div>
-            <div class="card-content">
-              <div class="media-content has-text-centered">
-                <p class="subtitle is-6">Black Drone</p>
-                <p class="title is-4">$374.69</p>
-              </div>
-            </div>
-            <footer class="card-footer">
-              <p class="card-footer-item">
-                <span>
-                  <a href="#" class="button is-primary">Add to Cart</a>
-                </span>
-              </p>
-            </footer>
-          </div>
+        <div
+          v-for="product in products" :key="product.key"
+          class="column is-full-mobile is-half-tablet is-half-desktop is-one-third-widescreen is-one-quarter-fullhd"
+        >
+          <ProductBox :product="product" />
         </div>
 
-        <div class="column is-full-mobile is-half-tablet is-half-desktop is-one-third-widescreen is-one-quarter-fullhd">
-          <div class="card">
-            <div class="card-image">
-              <figure class="image is-4by3">
-                <a href="product.html"><img src="http://placehold.it/800x600" alt="Image"></a>
-              </figure>
-            </div>
-            <div class="card-content">
-              <div class="media-content has-text-centered">
-                <p class="subtitle is-6">Black Drone</p>
-                <p class="title is-4">$374.69</p>
-              </div>
-            </div>
-            <footer class="card-footer">
-              <p class="card-footer-item">
-                <span>
-                  <a href="#" class="button is-primary">Add to Cart</a>
-                </span>
-              </p>
-            </footer>
-          </div>
-        </div>
-
-        <div class="column is-full-mobile is-half-tablet is-half-desktop is-one-third-widescreen is-one-quarter-fullhd">
-          <div class="card">
-            <div class="card-image">
-              <figure class="image is-4by3">
-                <a href="product.html"><img src="http://placehold.it/800x600" alt="Image"></a>
-              </figure>
-            </div>
-            <div class="card-content">
-              <div class="media-content has-text-centered">
-                <p class="subtitle is-6">Black Drone</p>
-                <p class="title is-4">$374.69</p>
-              </div>
-            </div>
-            <footer class="card-footer">
-              <p class="card-footer-item">
-                <span>
-                  <a href="#" class="button is-primary">Add to Cart</a>
-                </span>
-              </p>
-            </footer>
-          </div>
-        </div>
-
-        <div class="column is-full-mobile is-half-tablet is-half-desktop is-one-third-widescreen is-one-quarter-fullhd">
-          <div class="card">
-            <div class="card-image">
-              <figure class="image is-4by3">
-                <a href="product.html"><img src="http://placehold.it/800x600" alt="Image"></a>
-              </figure>
-            </div>
-            <div class="card-content">
-              <div class="media-content has-text-centered">
-                <p class="subtitle is-6">Black Drone</p>
-                <p class="title is-4">$374.69</p>
-              </div>
-            </div>
-            <footer class="card-footer">
-              <p class="card-footer-item">
-                <span>
-                  <a href="#" class="button is-primary">Add to Cart</a>
-                </span>
-              </p>
-            </footer>
-          </div>
-        </div>
       </div>
     </section>
   </div>
 </template>
 
 <script>
+import ProductBox from '@/components/ProductBox'
 export default {
+  computed: {
+    products() {
+      return this.$store.getters['catalog/products']
+    }
+  },
+  created() {
+    const loadedProducts = this.$store.getters['catalog/products']
+    if (loadedProducts.length === 0) {
+      this.$store.dispatch('catalog/getProducts')
+    }
+  },
+  components: {
+    ProductBox
+  }
 }
 </script>

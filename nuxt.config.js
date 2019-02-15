@@ -40,7 +40,8 @@ module.exports = {
   */
   plugins: [
     '~/plugins/vee-validate',
-    '~/plugins/vue-swal'
+    '~/plugins/vue-swal',
+    '~/plugins/filters'
   ],
 
   /*
