@@ -19,19 +19,18 @@
           <div class="level-left">
             <div class="field is-grouped is-grouped-multiline">
               <p class="control">
-                <input class="input" type="text" placeholder="Keyword">
+                <input class="input" type="text" placeholder="Keyword" v-model="keyword">
               </p>
               <p class="control">
                 <span class="select">
-                  <select>
-                    <option>All</option>
-                    <option>Drones</option>
-                    <option>Wearables</option>
+                  <select v-model="category">
+                    <option value="">All</option>
+                    <option v-for="category in categories" :key="category.key" :value="category.key">{{ category.name }}</option>
                   </select>
                 </span>
               </p>
               <p class="control">
-                <a class="button is-primary">
+                <a class="button is-primary" @click.prevent="search">
                   Search
                 </a>
               </p>
@@ -42,10 +41,10 @@
             <div class="field is-grouped is-grouped-multiline">
               <p class="control">
                 <span class="select">
-                  <select>
-                    <option>Latest</option>
-                    <option>Price - Low to High</option>
-                    <option>Price - High to Low</option>
+                  <select v-model="sort">
+                    <option value="">Latest</option>
+                    <option value="low">Price - Low to High</option>
+                    <option value="high">Price - High to Low</option>
                   </select>
                 </span>
               </p>
@@ -70,19 +69,40 @@
 <script>
 import ProductBox from '@/components/ProductBox'
 export default {
+  data() {
+    return {
+      keyword: '',
+      category: '',
+      sort: ''
+    }
+  },
   computed: {
     products() {
       return this.$store.getters['catalog/products']
+    },
+    categories() {
+      return this.$store.getters['catalog/categories']
     }
   },
   created() {
     const loadedProducts = this.$store.getters['catalog/products']
     if (loadedProducts.length === 0) {
       this.$store.dispatch('catalog/getProducts')
+      this.$store.dispatch('catalog/getCategories')
     }
   },
   components: {
     ProductBox
+  },
+  methods: {
+    search() {
+      const searchData = {
+        keyword: this.keyword,
+        category: this.category,
+        sort: this.sort
+      }
+      this.$store.dispatch('catalog/productSearch', searchData)
+    }
   }
 }
 </script>
