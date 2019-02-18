@@ -2,7 +2,7 @@
   <div class="card">
     <div class="card-image">
       <figure class="image is-4by3">
-        <nuxt-link to="/product"><img :src="product.imageUrl" :alt="product.name"></nuxt-link>
+        <nuxt-link :to="{ path: productPath(product.name, product.key) }"><img :src="product.imageUrl" :alt="product.name"></nuxt-link>
       </figure>
     </div>
     <div class="card-content">
@@ -22,8 +22,16 @@
 </template>
 
 <script>
+import {slugifyString} from '@/plugins/helpers'
+
   export default {
     name: 'ProductBox',
-    props: ['product']
+    props: ['product'],
+    methods: {
+      productPath(name, key) {
+        const slug = slugifyString(name)
+        return `/product/${slug}/${key}`
+      }
+    }
   }
 </script>
