@@ -33,6 +33,9 @@
                 <a class="button is-primary" @click.prevent="search">
                   Search
                 </a>
+                <a class="button is-warning" @click.prevent="$store.commit('catalog/emptyCart')">
+                  Empty Cart
+                </a>
               </p>
             </div>
           </div>

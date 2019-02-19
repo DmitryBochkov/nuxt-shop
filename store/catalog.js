@@ -2,7 +2,10 @@ import { fireApp } from '@/plugins/firebase'
 
 export const state = () => ({
   categories: [],
-  products: []
+  products: [],
+  cart: {
+    items: []
+  }
 })
 
 export const mutations = {
@@ -11,6 +14,12 @@ export const mutations = {
   },
   loadCategories(state, payload) {
     state.categories = payload
+  },
+  updateCart(state, payload) {
+    state.cart.items.push(payload)
+  },
+  emptyCart(state) {
+    state.cart.items = []
   }
 }
 
@@ -90,5 +99,8 @@ export const getters = {
   },
   products(state) {
     return state.products
+  },
+  cart(state) {
+    return state.cart
   }
 }

@@ -14,7 +14,7 @@
     <footer class="card-footer">
       <p class="card-footer-item">
         <span>
-          <a href="#" class="button is-primary">Add to Cart</a>
+          <a href="#" class="button is-primary" @click.prevent="addToCart(product)">Add to Cart</a>
         </span>
       </p>
     </footer>
@@ -23,10 +23,12 @@
 
 <script>
 import {slugifyString} from '@/plugins/helpers'
+import cartMixin from '@/mixins/cartMixin'
 
   export default {
     name: 'ProductBox',
     props: ['product'],
+    mixins: [cartMixin],
     methods: {
       productPath(name, key) {
         const slug = slugifyString(name)
