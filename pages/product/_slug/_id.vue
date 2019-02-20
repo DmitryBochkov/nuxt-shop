@@ -36,10 +36,10 @@
 
           <div class="field is-grouped is-grouped-multiline">
             <p class="control">
-              <input class="input has-text-centered" style="width:50px;" type="text" name="" value="1">
+              <input class="input has-text-centered" style="width:50px;" type="number" name="" value="1" ref="quantity">
             </p>
             <p class="control">
-              <a class="button is-primary">Add to cart</a>
+              <a class="button is-primary" @click="addToCart(product, $refs.quantity.value)">Add to cart</a>
             </p>
           </div>
 
@@ -59,8 +59,10 @@
 
 <script>
 import { fireApp } from '@/plugins/firebase'
+import cartMixin from '@/mixins/cartMixin'
 
 export default {
+  mixins: [cartMixin],
   asyncData({params}) {
     return fireApp.database().ref(`products/${params.id}`).once('value')
       .then(snapShot => {

@@ -15,6 +15,12 @@ export const mutations = {
   loadCategories(state, payload) {
     state.categories = payload
   },
+  updateQuantity(state, {index, productQuantity}) {
+    state.cart.items[index].quantity = productQuantity
+  },
+  increaseQuantity(state, index) {
+    state.cart.items[index].quantity += 1
+  },
   updateCart(state, payload) {
     state.cart.items.push(payload)
   },
