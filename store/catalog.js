@@ -21,6 +21,12 @@ export const mutations = {
   increaseQuantity(state, index) {
     state.cart.items[index].quantity += 1
   },
+  decreaseQuantity(state, index) {
+    state.cart.items[index].quantity -= 1
+    if (state.cart.items[index].quantity === 0) {
+      state.cart.items.splice(index, 1)
+    }
+  },
   updateCart(state, payload) {
     state.cart.items.push(payload)
   },
