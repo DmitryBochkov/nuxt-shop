@@ -50,7 +50,7 @@
             <nuxt-link class="button is-info" to="/">Back to Shopping</nuxt-link>
           </div>
           <div class="control">
-            <a class="button is-primary" href="#">Checkout</a>
+            <a class="button is-primary" @click.prevent="checkout">Checkout</a>
           </div>
         </div>
       </template>
@@ -68,6 +68,17 @@
 <script>
   import cartMixin from '@/mixins/cartMixin'
   export default {
-    mixins: [cartMixin]
+    mixins: [cartMixin],
+    methods: {
+       checkout() {
+         const isLoggedIn = this.$store.getters.loginStatus
+         if (!isLoggedIn) {
+           this.$store.commit('setForwardRoute', '/checkout')
+           this.$router.push('/login')
+         } else {
+           this.$router.push('/checkout')           
+         }
+       }
+    }
   }
 </script>
