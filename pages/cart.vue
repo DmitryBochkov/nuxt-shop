@@ -76,7 +76,7 @@
            this.$store.commit('setForwardRoute', '/checkout')
            this.$router.push('/login')
          } else {
-           this.$router.push('/checkout')           
+           this.$router.push('/checkout')
          }
        }
     }

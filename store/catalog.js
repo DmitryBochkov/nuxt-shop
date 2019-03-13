@@ -102,6 +102,32 @@ export const actions = {
       .catch(err => {
         console.log(err)
       })
+  },
+  postOrder({commit}, payload) {
+    // orders/orderKey/usrKey/productKey/productDetail
+    const orderKey = fireApp.database().ref('orders').push().key
+    const items = payload.items
+    const user = fireApp.auth().currentUser
+    let orderItems = {}
+
+    items.forEach(item => {
+      orderItems[`orders/${orderKey}/${user.uid}/${item.product.key}`] = {
+        product: item.product.name,
+        price: item.product.price,
+        quantity: item.quantity,
+        imageUrl: item.product.imageUrl,
+        createdAt: new Date().toISOString()
+      }
+    })
+
+    fireApp.database().ref().update(orderItems)
+      .then(() => {
+        commit('emptyCart')
+        commit('setJobDone', true, {root: true})
+      })
+      .catch(err => {
+        console.log(err)
+      })
   }
 }
 
