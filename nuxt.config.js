@@ -48,7 +48,20 @@ module.exports = {
   ** Nuxt.js modules
   */
   modules: [
-    '@nuxtjs/toast'
+    '@nuxtjs/toast',
+    ['vue-warehouse/nuxt',
+      {
+        vuex: true,
+        plugins: [
+          'store/plugins/expire',
+          'store/plugins/defaults'
+        ],
+        storages: [
+          'store/storages/localStorage',
+          'store/storages/cookieStorage'
+        ]
+      }
+    ]
   ],
 
   /*

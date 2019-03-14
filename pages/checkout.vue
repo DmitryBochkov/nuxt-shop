@@ -45,6 +45,7 @@
     },
     methods: {
       jobsDone() {
+        this.$warehouse.remove('cart')
         this.orderSuccess = true
       }
     }

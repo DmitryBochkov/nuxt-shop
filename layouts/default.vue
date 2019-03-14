@@ -162,6 +162,12 @@
       if (!this.userLoggedIn) {
         this.$store.dispatch('setAuthStatus')
       }
+    },
+    mounted() {
+      const cartInMemory = this.$warehouse.get('cart')
+      if (this.cart.items.length === 0 && cartInMemory != undefined) {
+        this.$store.commit('catalog/reloadCart', cartInMemory)
+      }
     }
   }
 </script>

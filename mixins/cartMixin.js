@@ -24,11 +24,14 @@ export default {
           quantity: productQuantity
         }
         this.$store.commit('catalog/updateCart', item)
+        this.updateLocalStorage()
       } else {
         if (!quantity) {
           this.$store.commit('catalog/increaseQuantity', index)
+          this.updateLocalStorage()
         } else {
           this.$store.commit('catalog/updateQuantity', {index, productQuantity})
+          this.updateLocalStorage()
         }
       }
 
@@ -40,9 +43,14 @@ export default {
     },
     increaseQuantity(index) {
       this.$store.commit('catalog/increaseQuantity', index)
+      this.updateLocalStorage()
     },
     decreaseQuantity(index) {
       this.$store.commit('catalog/decreaseQuantity', index)
+      this.updateLocalStorage()
+    },
+    updateLocalStorage() {
+      this.$warehouse.set('cart', this.cart)
     }
   },
   computed: {
